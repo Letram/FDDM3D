@@ -23,7 +23,7 @@ public class Gun : MonoBehaviour {
     {
         if (Time.time > fireRate + lastShot)
         {
-            Instantiate(bullet, transform.position, transform.parent.rotation);
+            Instantiate(bullet, transform.GetChild(0).GetComponent<Transform>().position, transform.parent.rotation);
             lastShot = Time.time;
         }
     }
