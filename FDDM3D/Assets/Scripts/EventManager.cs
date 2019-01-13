@@ -11,6 +11,9 @@ public class EventManager : MonoBehaviour {
 
     public delegate void BulletActionData(int data);
     public static event BulletActionData onGainStrength;
+
+    public delegate void WallAction();
+    public static event WallAction onWallDestroyed;
     public static void pubBulletDestroyed()
     {
         if (onBulletDestroyed != null)
@@ -26,5 +29,11 @@ public class EventManager : MonoBehaviour {
     {
         if (onGainStrength != null)
             onGainStrength(data);
+    }
+
+    public static void pubWallDestroyed()
+    {
+        if (onWallDestroyed != null)
+            onWallDestroyed();
     }
 }

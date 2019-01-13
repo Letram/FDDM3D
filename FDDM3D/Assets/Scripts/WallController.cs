@@ -39,4 +39,9 @@ public class WallController : MonoBehaviour {
     {
         GetComponent<Renderer>().material = invulnerable;
     }
+
+    private void OnDestroy()
+    {
+        EventManager.pubWallDestroyed();
+    }
 }

@@ -10,14 +10,18 @@ public class GameController : MonoBehaviour {
     public GameObject player;
     public TextMeshProUGUI shotsCounter;
     public GameObject playerLosePanel;
+    public GameObject playerWinPanel;
+
     private int shots;
-    private bool stopped;
+    private bool lost;
+    private bool win;
 	// Use this for initialization
 	void Start () {
         wallHealth = 2;
         shots = player.GetComponent<PlayerController>().getRemainingShots();
         shotsCounter.text = "Lives: " + shots;
-        stopped = false;
+        lost = false;
+        win = false;
     }
 
     public int getWallHealth()
@@ -27,20 +31,23 @@ public class GameController : MonoBehaviour {
 
     private void Update()
     {
-        if(stopped && Input.GetKeyUp(KeyCode.R))
+        if (lost && Input.GetKeyUp(KeyCode.R))
         {
-            Scene scene = SceneManager.GetActiveScene();
-            SceneManager.LoadScene(scene.name);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
+        else if (win && Input.GetKeyUp(KeyCode.Return))
+            SceneManager.LoadScene(0);
     }
     private void OnEnable()
     {
         EventManager.onShotFinished += updatePlayerShots;
+        EventManager.onWallDestroyed += playerWin;
     }
 
     private void OnDisable()
     {
         EventManager.onShotFinished -= updatePlayerShots;
+        EventManager.onWallDestroyed -= playerWin;
     }
 
     private void updatePlayerShots()
@@ -50,7 +57,13 @@ public class GameController : MonoBehaviour {
         if (shots <= 0)
         {
             playerLosePanel.SetActive(true);
-            stopped = true;
+            lost = true;
         }
+    }
+
+    private void playerWin()
+    {
+        playerWinPanel.SetActive(true);
+        win = true;
     }
 }
