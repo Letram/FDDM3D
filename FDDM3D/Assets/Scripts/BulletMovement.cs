@@ -9,7 +9,7 @@ public class BulletMovement : MonoBehaviour {
     public float maxSpeed = 5f;
     public float timeToDestroy = 5f;
     private int strength;
-    private bool forceAdded = false;
+    //private bool forceAdded = false;
 	// Use this for initialization
 	void Start () {
         strength = 0;
@@ -35,28 +35,22 @@ public class BulletMovement : MonoBehaviour {
             Vector3 reflectDir = Vector3.Reflect(ray.direction, hit.normal);
             float rot = 90 - Mathf.Atan2(reflectDir.z, reflectDir.x) * Mathf.Rad2Deg;
             transform.eulerAngles = new Vector3(0, rot, 0);
-            if (hit.collider.CompareTag("Obstacle"))
-            {
+            if (hit.collider.CompareTag("Obstacle")) {
                 strength++;
-                print("Le ha dado a un obstáculo, su fuerza ahora es de: " + (strength));
+                EventManager.pubGainStrength(strength);
             }
-            else if (hit.collider.CompareTag("Limit")) Destroy(gameObject);
+            else if (hit.collider.CompareTag("Limit") || hit.collider.CompareTag("Wall") && strength < GameObject.Find("GameManager").GetComponent<GameController>().getWallHealth()) Destroy(gameObject);
             else if (hit.collider.CompareTag("Wall") && strength >= GameObject.Find("GameManager").GetComponent<GameController>().getWallHealth()) Destroy(hit.collider.gameObject);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        print(other.tag);
         if (other.CompareTag("Limit")) Destroy(gameObject);
-        //if (other.CompareTag("Wall") && strength < GameObject.Find("GameManager").GetComponent<GameController>().getWallHealth()) Destroy(gameObject);
     }
-    /*
-    void OnCollisionEnter(Collision collision)
+
+    private void OnDestroy()
     {
-        Vector3 v = Vector3.Reflect(transform.direction, collision.contacts[0].normal);
-        float rot = 90 - Mathf.Atan2(v.z, v.x) * Mathf.Rad2Deg;
-        transform.eulerAngles = new Vector3(0, rot, 0);
+        EventManager.pubBulletDestroyed();
     }
-    */
 }

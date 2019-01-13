@@ -6,9 +6,11 @@ public class PlayerController : MonoBehaviour {
 
     [Range(1,10)]
     public int rotationSpeed = 10;
+    public int shots = 5;
+    private Quaternion initialRotation;
 	// Use this for initialization
 	void Start () {
-		
+        initialRotation = transform.rotation;
 	}
 	
 	// Update is called once per frame
@@ -25,4 +27,25 @@ public class PlayerController : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.R))
             transform.rotation = Quaternion.identity;
 	}
+
+    public int getRemainingShots()
+    {
+        return shots;
+    }
+    private void OnEnable()
+    {
+        EventManager.onBulletDestroyed += bulletDestroyed;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.onBulletDestroyed -= bulletDestroyed;
+    }
+
+    private void bulletDestroyed()
+    {
+        shots--;
+        transform.rotation = initialRotation;
+        EventManager.pubShotsChanged();
+    }
 }
